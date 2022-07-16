@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const {getData, setData, updateData, deleteData} = require('../controllers/dataController')
+const {getProduct, setProduct, updateProduct, deleteProduct} = require('../controllers/dataController')
 
-router.route('/').get(getData).post(setData)
-router.route('/:id').delete(deleteData).put(updateData)
+router.route('/').get(getProduct).post(setProduct)
+router.route('/:id').delete(deleteProduct).put(updateProduct)
 
 
 module.exports = router;
