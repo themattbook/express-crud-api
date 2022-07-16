@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Product = require("../models/dataModel");
+const User = require("../models/userModel");
 // @desc Get data
 // @route GET /api/data
 // @access Private
@@ -17,6 +18,14 @@ const setProduct = asyncHandler(async (req, res) => {
       "Ensure you are using the data parameter in the request body"
     );
   }
+
+  const user = await User.findById(req.user.id);
+
+  if (!user.admin) {
+    res.status(401);
+    throw new Error("Access is denied.");
+  }
+
   const product = await Product.create({
     product_name: req.body.product_name,
     product_brand: req.body.product_brand,
@@ -29,6 +38,7 @@ const setProduct = asyncHandler(async (req, res) => {
         item_description: req.body.meta[0].item_description,
       },
     ],
+    created_by: req.user.id,
   });
   res.status(200).json(product);
 });
@@ -41,6 +51,14 @@ const updateProduct = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Product not found.");
   }
+
+  const user = await User.findById(req.user.id);
+
+  if (!user.admin) {
+    res.status(401);
+    throw new Error("Access is denied.");
+  }
+
   const updatedProduct = await Product.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -57,6 +75,14 @@ const deleteProduct = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Product not found.");
   }
+
+  const user = await User.findById(req.user.id);
+
+  if (!user.admin) {
+    res.status(401);
+    throw new Error("Access is denied.");
+  }
+
   await product.remove();
   res.status(200).json({ id: req.params.id });
 });
